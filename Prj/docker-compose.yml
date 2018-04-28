@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  prj:
+    image: prj
+    build:
+      context: .
+      dockerfile: Prj/Dockerfile
