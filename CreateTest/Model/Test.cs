@@ -9,17 +9,19 @@ namespace CreateTest.Model
     public struct Answer
     {
         public string Content { get; set; }
+        public string Correct { get; set; }
+    }
+
+    public struct QuestionObj
+    {
+        public string Question { get; set; }
+        public List<Answer> Answers { get; set; }
         public int Points { get; set; }
     }
 
-    public struct Question
-    {
-        public string Content { get; set; }
-        public List<Answer> Answers { get; set; }
-    }
     public class Test
     {
-        public List<Question> Questions { get; set; }
         public string Lecture { get; set; }
+        public List<QuestionObj> Questions { get; set; }
     }
 }

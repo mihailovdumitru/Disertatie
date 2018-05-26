@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CreateTest.Model;
 using Microsoft.AspNetCore.Mvc;
+//using ServicesDemo.Infrastructure;
 
 namespace CreateTest.Controllers
 {
@@ -22,16 +23,21 @@ namespace CreateTest.Controllers
 
         // GET: api/CreateTest/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(HttpRequestMessage request, int id)
+        public Testare Get(HttpRequestMessage request, int id)
         {
-            return "";
+            Testare test = new Testare();
+            test.Nume = "Ana";
+            return test;
         }
         
         // POST: api/CreateTest
         [HttpPost]
-        public void Post([FromBody]Test testObject)
+        public void Post([FromBody] Test test)
         {
-            Console.WriteLine(testObject.Lecture);
+            Services.Service service = new Services.Service();
+            service.Salut();
+
+            Console.WriteLine("");
         }
         
         // PUT: api/CreateTest/5
