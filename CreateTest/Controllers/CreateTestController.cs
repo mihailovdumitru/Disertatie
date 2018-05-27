@@ -4,8 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CreateTest.Model;
 using Microsoft.AspNetCore.Mvc;
+using Model;
+using Model.Test;
 //using ServicesDemo.Infrastructure;
 
 namespace CreateTest.Controllers
@@ -23,21 +24,21 @@ namespace CreateTest.Controllers
 
         // GET: api/CreateTest/5
         [HttpGet("{id}", Name = "Get")]
-        public Testare Get(HttpRequestMessage request, int id)
+        public void Get(HttpRequestMessage request, int id)
         {
-            Testare test = new Testare();
-            test.Nume = "Ana";
-            return test;
+            //Testare test = new Testare();
+            //test.Nume = "Ana";
+            //return test;
         }
         
         // POST: api/CreateTest
         [HttpPost]
-        public void Post([FromBody] Test test)
+        public ActionResult Post([FromBody] Test test)
         {
-            Services.Service service = new Services.Service();
-            service.Salut();
+            //Services.Service service = new Services.Service();
+            //service.Salut();
 
-            Console.WriteLine("");
+            return Ok("Totul e bine");
         }
         
         // PUT: api/CreateTest/5

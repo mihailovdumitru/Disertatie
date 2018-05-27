@@ -1,18 +1,28 @@
-﻿using Services.Infrastructure;
+﻿using Model.Test;
+using Services.Infrastructure;
 using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
+using Services.Endpoints;
 
 namespace Services
 {
-    public class Service//:IService
+    public class Service: IService
     {
         private readonly IRestHttpClient restHttpClient;
-        private readonly string phoenixApiBaseUrl;
-        public string verif;
+        private readonly string testApiUrl;
 
-        public void Salut()
+        public Service(IRestHttpClient restHttpClient)
         {
-            verif = "Dima";
-            Console.WriteLine("Salut");
+            this.restHttpClient = restHttpClient;
+            testApiUrl = ConfigurationManager.AppSettings.Get("TestApiUrl");
+        }
+
+
+        public async Task<ActionResult> AddTest(Test test)
+        {
+            return await restHttpClient.Post<Test, ActionResult>(testApiUrl, $"{TestEndpoint.AddTest}", test);
         }
     }
 }
