@@ -19,7 +19,6 @@ namespace Services
             testApiUrl = ConfigurationManager.AppSettings.Get("TestApiUrl");
         }
 
-
         public async Task<ActionResult> AddTest(Test test)
         {
             return await restHttpClient.Post<Test, ActionResult>(testApiUrl, $"{TestEndpoint.AddTest}", test);

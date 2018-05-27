@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Model;
 using Model.Test;
-//using ServicesDemo.Infrastructure;
+using Services;
 
 namespace CreateTest.Controllers
 {
@@ -15,6 +15,14 @@ namespace CreateTest.Controllers
     [Route("api/CreateTest")]
     public class CreateTestController : Controller
     {
+        public readonly IService service;
+
+        public CreateTestController(IService service)
+        {
+            this.service = service;
+        }
+
+
         // GET: api/CreateTest
         [HttpGet]
         public IEnumerable<string> Get()
@@ -33,12 +41,11 @@ namespace CreateTest.Controllers
         
         // POST: api/CreateTest
         [HttpPost]
-        public ActionResult Post([FromBody] Test test)
+        public async Task<ActionResult> Post([FromBody] Test test)
         {
             //Services.Service service = new Services.Service();
             //service.Salut();
-
-            return Ok("Totul e bine");
+            return await service.AddTest(test);
         }
         
         // PUT: api/CreateTest/5
