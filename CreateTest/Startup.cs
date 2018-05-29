@@ -35,11 +35,6 @@ namespace CreateTest
                        .AllowAnyHeader();
             }));
 
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
-            });
-
             services.AddScoped<IService, Service>();
             services.AddScoped<IRestHttpClient, RestHttpClient>();
         }
