@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Model.Repositories;
+using Services;
 
 namespace API.Controllers
 {
@@ -11,6 +13,12 @@ namespace API.Controllers
     [Route("api/Teachers")]
     public class TeachersController : Controller
     {
+        private readonly IService service;
+
+        public TeachersController(IService service)
+        {
+            this.service = service;
+        }
         // GET: api/Teachers
         [HttpGet]
         public IEnumerable<string> Get()
@@ -27,8 +35,9 @@ namespace API.Controllers
         
         // POST: api/Teachers
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<int> Post([FromBody]TeacherDto teacher)
         {
+            return await service.AddTeacher(teacher);
         }
         
         // PUT: api/Teachers/5

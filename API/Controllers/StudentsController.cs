@@ -21,9 +21,9 @@ namespace API.Controllers
         }
         // GET: api/Students
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<Student>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await service.GetStudents();
         }
 
         // GET: api/Students/5

@@ -28,9 +28,9 @@ namespace Services
             return await restHttpClient.Post<Test, ActionResult>(testApiUrl, $"{TestEndpoint.AddTest}", test);
         }
 
-        public async Task<int> AddTeacher(Teacher teacher)
+        public async Task<int> AddTeacher(TeacherDto teacher)
         {
-            return await restHttpClient.Post<Teacher, int>(apiUrl, $"{RepositoriesEndpoint.AddTeacher}", teacher);
+            return await restHttpClient.Post<TeacherDto, int>(apiUrl, $"{RepositoriesEndpoint.AddTeacher}", teacher);
         }
 
         public async Task<int> AddClass(StudyClass studyClass)
@@ -48,9 +48,19 @@ namespace Services
             return await restHttpClient.Post<Lecture, int>(apiUrl, $"{RepositoriesEndpoint.AddLecture}", lecture);
         }
 
+        public async Task<IEnumerable<Lecture>> GetLectures()
+        {
+            return await restHttpClient.Get<IEnumerable<Lecture>>(apiUrl, $"{RepositoriesEndpoint.GetLectures}");
+        }
+
         public async Task<int> AddStudent(Student student)
         {
             return await restHttpClient.Post<Student, int>(apiUrl, $"{RepositoriesEndpoint.AddStudent}", student);
+        }
+
+        public async Task<IEnumerable<Student>> GetStudents()
+        {
+            return await restHttpClient.Get<IEnumerable<Student>>(apiUrl, $"{RepositoriesEndpoint.GetStudents}");
         }
     }
 }

@@ -22,9 +22,9 @@ namespace API.Controllers
 
         // GET: api/Lectures
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<Lecture>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await service.GetLectures();
         }
 
         // GET: api/Lectures/5
