@@ -43,8 +43,9 @@ namespace API.Controllers
         
         // PUT: api/Lectures/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public async Task<bool> Put(int id, [FromBody]Lecture lecture)
         {
+            return await service.UpdateLecture(lecture, id);
         }
         
         // DELETE: api/ApiWithActions/5
