@@ -43,9 +43,7 @@ namespace CreateTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Test test)
         {
-            test.LectureID = 1;
             test.TeacherID = 1;
-
 
             return await service.AddTest(test);
         }

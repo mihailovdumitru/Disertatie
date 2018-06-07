@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Services;
+using Services.Facade.Interfaces;
 
 namespace API.Controllers
 {
@@ -14,10 +15,12 @@ namespace API.Controllers
     public class StudentsController : Controller
     {
         private readonly IService service;
+        private readonly IUsersFacade usersFacade;
 
-        public StudentsController(IService service)
+        public StudentsController(IService service, IUsersFacade usersFacade)
         {
             this.service = service;
+            this.usersFacade = usersFacade;
         }
         // GET: api/Students
         [HttpGet]
@@ -25,19 +28,12 @@ namespace API.Controllers
         {
             return await service.GetStudents();
         }
-
-        // GET: api/Students/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
         
         // POST: api/Students
         [HttpPost]
         public async Task<int> Post([FromBody]Student student)
         {
-            return await service.AddStudent(student);
+            return await usersFacade.AddStudentUser(student);
         }
         
         // PUT: api/Students/5
@@ -49,8 +45,9 @@ namespace API.Controllers
         
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
+            return await service.DeleteStudent(id);
         }
     }
 }

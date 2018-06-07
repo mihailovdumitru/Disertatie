@@ -111,6 +111,33 @@ namespace Services.Infrastructure
             return false;
         }
 
+        public async Task<bool> Delete(string baseUrl, string url)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.DeleteAsync(url).ConfigureAwait(false);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return true;
+                    }
+                    // LoggerManager.LogError($"{baseUrl}+{url} - {response.StatusCode} - {response}");
+                }
+            }
+            catch (Exception ex)
+            {
+                //LoggerManager.LogError($"{baseUrl}+{url}- {ex.StackTrace}");
+            }
+            return false;
+        }
+
         public void SetMediaTypeRequestHeader(string mediaTypeRequestHeader)
         {
             this.mediaTypeRequestHeader = mediaTypeRequestHeader;

@@ -37,6 +37,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<int> Post([FromBody]StudyClass studyClass)
         {
+            studyClass.IsActive = true;
             return await service.AddClass(studyClass);
         }
         
@@ -44,13 +45,15 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<bool> Put(int id, [FromBody]StudyClass studyClass)
         {
+            studyClass.IsActive = true;
             return await service.UpdateClass(studyClass, id);
         }
         
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
+            return await service.DeleteStudyClass(id);
         }
     }
 }

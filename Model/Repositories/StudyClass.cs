@@ -8,5 +8,6 @@ namespace Model.Repositories
     {
         public int ClassID { get; set; }
         public string Name { get; set; }
+        public bool IsActive { get; set; }
     }
 }

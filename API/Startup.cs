@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Services;
+using Services.Facade.Implementation;
+using Services.Facade.Interfaces;
 using Services.Infrastructure;
 
 namespace API
@@ -43,6 +45,7 @@ namespace API
 
             services.AddScoped<IService, Service>();
             services.AddScoped<IRestHttpClient, RestHttpClient>();
+            services.AddScoped<IUsersFacade, UsersFacade>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

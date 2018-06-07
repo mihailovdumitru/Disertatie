@@ -20,3 +20,17 @@ services:
       context: .
       dockerfile: ../API/Dockerfile
 
+
+  webapplication1:
+    image: webapplication1
+    build:
+      context: .
+      dockerfile: ../WebApplication1/Dockerfile
+
+
+  auth:
+    image: auth
+    build:
+      context: .
+      dockerfile: Auth/Dockerfile
+

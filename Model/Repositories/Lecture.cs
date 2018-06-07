@@ -9,5 +9,6 @@ namespace Model.Repositories
         public int LectureID { get; set; }
         public string Name { get; set; }
         public int YearOfStudy { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace Model.Repositories
         public string LastName { get; set; }
         public string Email { get; set; }
         public List<int> Lectures { get; set; }
+        public int UserID { get; set; }
     }
 }
