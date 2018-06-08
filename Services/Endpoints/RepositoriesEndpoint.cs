@@ -28,5 +28,6 @@ namespace Services.Endpoints
         public static string UpdateClass = "classes/{0}";
         public static string GetTests = "tests";
         public static string GetTeacherAuthObj = "auth/teacherAuth?email={0}";
+        public static string AddTestParams = "tests";
     }
 }

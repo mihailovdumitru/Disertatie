@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 
@@ -32,9 +29,6 @@ namespace Services.Infrastructure
                 sb.Append(Environment.NewLine);
             }
 
-            /*var result = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-            result.Content = new StringContent(sb.ToString());*/
 
             var resp = new ContentResult
             {

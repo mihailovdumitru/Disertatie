@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,19 +19,17 @@ namespace BeginTest.Controllers
     {
         private readonly IService service;
         private readonly IBeginTestFacade facade;
-        private readonly IFileGenerator fileGenerator;
+        int teacherID = 21;
 
-        public BeginTestController(IService service, IBeginTestFacade facade, IFileGenerator fileGenerator)
+        public BeginTestController(IService service, IBeginTestFacade facade)
         {
             this.service = service;
             this.facade = facade;
-            this.fileGenerator = fileGenerator;
         }
 
         [HttpGet]
         public async Task<IEnumerable<Test>> Tests()
         {
-            int teacherID = 1;
             var tests = await service.GetTests();
             return tests.Where(test => test.TeacherID == teacherID);
         }
@@ -38,25 +37,30 @@ namespace BeginTest.Controllers
         [HttpGet]
         public async Task<IEnumerable<Lecture>> TeacherLectures()
         {
-            int teacherID = 1;
             return await facade.GetTeachersLectures(teacherID);
         }
 
         [HttpPost]
         public async Task<ContentResult> GenerateFileWithHashCodes([FromBody] int classID)
         {
-            int teacherID = 1;
-            var students = await service.GetStudents();
-            var classStudents = students.Where(student => student.ClassID == classID).ToList<Student>();
-
-            return fileGenerator.GenerateFile<Student>(classStudents);
+            return await facade.GenerateHashCodes(classID);
         }
 
-        [HttpPut]
-        public async Task<bool> HashCodesForStudents([FromBody] int classID)
+        [HttpPost]
+        public async Task<bool> AddTestParameters([FromBody] TestParameters testParams)
         {
-            return await facade.PutHashCodesForStudents(classID);
+            testParams.TeacherID = teacherID;
+            testParams.StartTest = DateTime.Now;
+            testParams.FinishTest = DateTime.Now.AddMinutes(testParams.Duration);
+            return await service.AddTestParams(testParams);
         }
+
+        /*[HttpPut]
+        public async Task<ContentResult> HashCodesForStudents([FromBody] int classID)
+        {
+
+            return await facade.PutHashCodesForStudents(classStudents);
+        }*/
 
         // POST: api/Lectures
         [HttpPost]

@@ -33,5 +33,6 @@ namespace Services
         Task<IEnumerable<Test>> GetTests();
         Task<bool> UpdateUser(User user, int userID);
         Task<int> AddUser(User user);
+        Task<bool> AddTestParams(TestParameters testParams);
     }
 }
