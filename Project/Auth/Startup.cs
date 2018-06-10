@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthenticationLibrary.Implementation;
+using AuthenticationLibrary.Interfaces;
+using AuthenticationLibrary.Mapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Services;
+using Services.Infrastructure;
 
 namespace Auth
 {
@@ -24,6 +31,28 @@ namespace Auth
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+
+
+            services.AddCors(o => o.AddPolicy("UrlPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("UrlPolicy"));
+            });
+
+            var config = new AutoMapper.MapperConfiguration(mapperConfig => mapperConfig.AddProfile(new MappingProfile()));
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IService, Service>();
+            services.AddScoped<IRestHttpClient, RestHttpClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +64,7 @@ namespace Auth
             }
 
             app.UseMvc();
+            app.UseCors("UrlPolicy");
         }
     }
 }

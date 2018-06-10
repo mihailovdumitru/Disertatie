@@ -34,5 +34,6 @@ namespace Services
         Task<bool> UpdateUser(User user, int userID);
         Task<int> AddUser(User user);
         Task<bool> AddTestParams(TestParameters testParams);
+        Task<User> GetUserByUsername(string username);
     }
 }

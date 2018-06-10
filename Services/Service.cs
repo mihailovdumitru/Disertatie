@@ -148,6 +148,10 @@ namespace Services
             return await restHttpClient.Post<TestParameters,bool>(beginTestUrl, $"{RepositoriesEndpoint.AddTestParams}", testParams);
         }
 
+        public async Task<User> GetUserByUsername(string username)
+        {
+            return await restHttpClient.Get<User>(apiUrl, string.Format(RepositoriesEndpoint.GetUserByUsername, username));
+        }
 
     }
 }

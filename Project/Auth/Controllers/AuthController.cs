@@ -2,20 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthenticationLibrary.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Auth")]
+    [Route("api/[controller]/[action]")]
     public class AuthController : Controller
     {
+        private readonly  IAuthService authService;
+
+        public AuthController(IAuthService authService)
+        {
+            this.authService = authService;
+        }
         // GET: api/Auth
         [HttpGet]
-        public IEnumerable<string> GetAuthToken()
+        public async Task<string> Login()
         {
-            return new string[] { "value1", "value2" };
+            var request = Request;
+
+            return await authService.GetToken(request);
         }
 
         // GET: api/Auth/5

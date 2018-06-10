@@ -25,9 +25,10 @@ namespace Services.Facade.Implementation
 
         public async Task<int> AddTeacherUser(Teacher teacher)
         {
-            byte[] passwordByteArray = Encoding.ASCII.GetBytes(defaultPassword);
+            byte[] passwordByteArray = Encoding.UTF8.GetBytes(defaultPassword);
             var hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-            var password = Encoding.Default.GetString(hashedPasswordByteArray);
+            var password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty);
+
 
             User teacherUser = new User
             {
@@ -47,7 +48,7 @@ namespace Services.Facade.Implementation
         {
             byte[] passwordByteArray = Encoding.ASCII.GetBytes(defaultPassword);
             var hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-            var password = Encoding.Default.GetString(hashedPasswordByteArray);
+            var password = Encoding.ASCII.GetString(hashedPasswordByteArray);
 
             User studentUser = new User
             {
