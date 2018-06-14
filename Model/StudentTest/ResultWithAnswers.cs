@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Model.Test
+namespace Model.StudentTest
 {
-    public class Question
+    public class ResultWithAnswers
     {
         public int QuestionID { get; set; }
-        public int Points { get; set; }
-        public string Content { get; set; }
+        public List<int> Answers { get; set; }
     }
 }

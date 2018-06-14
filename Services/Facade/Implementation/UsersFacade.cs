@@ -27,7 +27,7 @@ namespace Services.Facade.Implementation
         {
             byte[] passwordByteArray = Encoding.UTF8.GetBytes(defaultPassword);
             var hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-            var password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty);
+            var password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty).ToLower();
 
 
             User teacherUser = new User
@@ -48,7 +48,8 @@ namespace Services.Facade.Implementation
         {
             byte[] passwordByteArray = Encoding.ASCII.GetBytes(defaultPassword);
             var hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-            var password = Encoding.ASCII.GetString(hashedPasswordByteArray);
+            var password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty).ToLower();
+
 
             User studentUser = new User
             {

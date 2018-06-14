@@ -107,15 +107,47 @@ namespace AuthenticationLibrary.Implementation
 
                 tokenObj = JsonConvert.DeserializeObject<Token>(content);
 
-                if(tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role == "teacher")
+                if(tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("teacher"))
                 {
                     var teachers = await service.GetTeachers();
 
-                    teacher = teachers.First(t => t.UserID == tokenObj.UserID);
+                     teacher = teachers.FirstOrDefault(t => t.UserID == tokenObj.UserID);
                 }
             }
 
             return teacher;
         }
+
+        public async Task<Student> ValidateStudent(HttpRequest request)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            string content = String.Empty;
+            Token tokenObj = new Token();
+            var authorizationHeader = request.Headers["Authorization"].ToString();
+            string token = String.Empty;
+            Student student = null;
+
+            if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
+            {
+                token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
+
+                handler = new JwtSecurityTokenHandler();
+                var tokenObject = handler.ReadJwtToken(token);
+
+                content = tokenObject.Payload.FirstOrDefault().Value.ToString();
+
+                tokenObj = JsonConvert.DeserializeObject<Token>(content);
+
+                if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("student"))
+                {
+                    var students = await service.GetStudents();
+
+                    student = students.First(t => t.UserID == tokenObj.UserID);
+                }
+            }
+
+            return student;
+        }
+
     }
 }

@@ -34,3 +34,24 @@ services:
       context: .
       dockerfile: Auth/Dockerfile
 
+
+  studentstart:
+    image: studentstart
+    build:
+      context: .
+      dockerfile: ../StudentStart/Dockerfile
+
+
+  studenttest:
+    image: studenttest
+    build:
+      context: .
+      dockerfile: StudentTest/Dockerfile
+
+
+  teacherviewresults:
+    image: teacherviewresults
+    build:
+      context: .
+      dockerfile: ../TeacherViewResults/Dockerfile
+

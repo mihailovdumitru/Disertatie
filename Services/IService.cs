@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Model.Dto;
 using Model.Repositories;
+using Model.StudentTest;
 using Model.Test;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,12 @@ namespace Services
         Task<IEnumerable<Test>> GetTests();
         Task<bool> UpdateUser(User user, int userID);
         Task<int> AddUser(User user);
+        Task<List<TestParameters>> GetTestsParams();
         Task<bool> AddTestParams(TestParameters testParams);
         Task<User> GetUserByUsername(string username);
+        Task<StudentTest> GetTestByID(int testID);
+        Task<Test> GetFullTestByID(int testID);
+        Task<bool> AddTestResults(TestResults testResults);
+        Task<List<TestResults>> GetTestsResults();
     }
 }

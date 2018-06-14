@@ -116,7 +116,8 @@ namespace Services.Facade.Implementation
                 {
                     passwordByteArray = Encoding.ASCII.GetBytes(users[i].Password);
                     hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-                    users[i].Password = Encoding.Default.GetString(hashedPasswordByteArray);
+                    users[i].Password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty).ToLower();
+
                 }
             }
 

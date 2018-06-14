@@ -45,7 +45,7 @@ namespace BeginTest.Controllers
                 return Ok(teachersTests);
             }
 
-            return Forbid();       
+            return Unauthorized();
         }
 
         [HttpGet]
@@ -59,7 +59,7 @@ namespace BeginTest.Controllers
                 return Ok(teacherLectures);
             }
 
-            return Forbid();
+            return Unauthorized();
         }
 
         [HttpPost]
@@ -72,7 +72,7 @@ namespace BeginTest.Controllers
                 return Ok(fileContent);
             }
 
-            return Forbid();
+            return Unauthorized();
         }
 
         [HttpPost]
@@ -89,8 +89,10 @@ namespace BeginTest.Controllers
                 return Ok(result);
             }
 
-            return Forbid();    
+            return Unauthorized();
         }
+
+
 
         /*[HttpPut]
         public async Task<ContentResult> HashCodesForStudents([FromBody] int classID)

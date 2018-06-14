@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Model.Test
+namespace Model.Repositories
 {
-    public class Answer
+    public class QuestionWithAnswer
     {
+        public int QuestionID { get; set; }
         public int AnswerID { get; set; }
-        public string Content { get; set; }
         public bool Correct { get; set; }
     }
 }

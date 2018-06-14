@@ -8,6 +8,7 @@ using Services.Endpoints;
 using Model.Repositories;
 using System.Collections.Generic;
 using Model.Dto;
+using Model.StudentTest;
 
 namespace Services
 {
@@ -18,6 +19,7 @@ namespace Services
         private readonly string apiUrl;
         private readonly string beginTestUrl;
         private readonly string authUrl;
+        private readonly string studentTestUrl;
 
         public Service(IRestHttpClient restHttpClient)
         {
@@ -26,6 +28,7 @@ namespace Services
             apiUrl = ConfigurationManager.AppSettings.Get("ApiUrl");
             beginTestUrl = ConfigurationManager.AppSettings.Get("BeginTestUrl");
             authUrl = ConfigurationManager.AppSettings.Get("AuthUrl");
+            studentTestUrl = ConfigurationManager.AppSettings.Get("StudentTest");
         }
 
         public async Task<ActionResult> AddTest(Test test)
@@ -148,10 +151,35 @@ namespace Services
             return await restHttpClient.Post<TestParameters,bool>(beginTestUrl, $"{RepositoriesEndpoint.AddTestParams}", testParams);
         }
 
+        public async Task<List<TestParameters>> GetTestsParams()
+        {
+            return await restHttpClient.Get<List<TestParameters>>(studentTestUrl, RepositoriesEndpoint.GetTestsParams);
+        }
+
+
         public async Task<User> GetUserByUsername(string username)
         {
             return await restHttpClient.Get<User>(apiUrl, string.Format(RepositoriesEndpoint.GetUserByUsername, username));
         }
 
+        public async Task<StudentTest> GetTestByID(int testID)
+        {
+            return await restHttpClient.Get<StudentTest>(studentTestUrl, string.Format(RepositoriesEndpoint.GetTest, testID));
+        }
+
+        public async Task<Test> GetFullTestByID(int testID)
+        {
+            return await restHttpClient.Get<Test>(studentTestUrl, string.Format(RepositoriesEndpoint.GetTest, testID));
+        }
+
+        public async Task<bool> AddTestResults(TestResults testResults)
+        {
+            return await restHttpClient.Post<TestResults, bool>(studentTestUrl, $"{RepositoriesEndpoint.AddTestResults}", testResults);
+        }
+
+        public async Task<List<TestResults>> GetTestsResults()
+        {
+            return await restHttpClient.Get<List<TestResults>>(studentTestUrl, RepositoriesEndpoint.GetTestResults);
+        }
     }
 }
