@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Model.Test;
@@ -15,6 +16,8 @@ namespace BeginTest.Controllers
     [Route("api/[controller]/[action]")]
     public class BeginTestController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
         private readonly IBeginTestFacade facade;
         private readonly IAuthService auth;
@@ -35,6 +38,8 @@ namespace BeginTest.Controllers
 
             if (teacher != null)
             {
+                _log.Info("Get tests for the teacher: " + teacher.FirstName + " " + teacher.LastName);
+
                 var tests = await service.GetTests();
                 teachersTests = tests.Where(test => test.TeacherID == teacher.TeacherID);
 
@@ -50,6 +55,8 @@ namespace BeginTest.Controllers
             var teacher = await auth.ValidateTeacher(Request);
             if (teacher != null)
             {
+                _log.Info("Get lectures for the teacher: " + teacher.FirstName + " " + teacher.LastName);
+
                 var teacherLectures = await facade.GetTeachersLectures(teacherID);
 
                 return Ok(teacherLectures);

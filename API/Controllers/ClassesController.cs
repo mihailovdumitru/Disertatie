@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Services;
@@ -10,6 +11,8 @@ namespace API.Controllers
     [Route("api/Classes")]
     public class ClassesController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
 
         public ClassesController(IService service)
@@ -21,6 +24,8 @@ namespace API.Controllers
         [HttpGet]
         public async Task<List<StudyClass>> Get()
         {
+            _log.Info("Get all the classes.");
+
             return await service.GetClasses();
         }
 
@@ -29,6 +34,7 @@ namespace API.Controllers
         public async Task<int> Post([FromBody]StudyClass studyClass)
         {
             studyClass.IsActive = true;
+            _log.Info("Insert a new class: " + studyClass.Name);
 
             return await service.AddClass(studyClass);
         }
@@ -38,6 +44,7 @@ namespace API.Controllers
         public async Task<bool> Put(int id, [FromBody]StudyClass studyClass)
         {
             studyClass.IsActive = true;
+            _log.Info("Update the class: " + studyClass.Name);
 
             return await service.UpdateClass(studyClass, id);
         }
@@ -46,6 +53,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<bool> Delete(int id)
         {
+            _log.Info("Delete the class. ClassId: " + id);
+
             return await service.DeleteStudyClass(id);
         }
     }

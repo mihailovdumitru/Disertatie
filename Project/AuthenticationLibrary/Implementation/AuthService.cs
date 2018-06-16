@@ -18,7 +18,7 @@ namespace AuthenticationLibrary.Implementation
 {
     public class AuthService : IAuthService
     {
-        private static ILog Log;
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IMapper mapper;
         private readonly IService service;
@@ -37,24 +37,34 @@ namespace AuthenticationLibrary.Implementation
         public async Task<string> GetToken(HttpRequest request)
         {
             string token = " ";
-            var username = request.Headers["username"].ToString().Trim(new char[] { '{', '}' });
-            var hashedPassword = request.Headers["password"].ToString().Trim(new char[] { '{', '}' });
-            var oldPassword = request.Headers["oldpassword"].ToString().Trim(new char[] { '{', '}' });
 
-            var user = await service.GetUserByUsername(username);
-
-            if (user != null)
+            try
             {
-                if ((String.IsNullOrEmpty(oldPassword) == false) && oldPassword.Equals(user.Password) && user.IsActive == true)
+                var username = request.Headers["username"].ToString().Trim(new char[] { '{', '}' });
+                var hashedPassword = request.Headers["password"].ToString().Trim(new char[] { '{', '}' });
+                var oldPassword = request.Headers["oldpassword"].ToString().Trim(new char[] { '{', '}' });
+
+                _log.Info("Get the token for the user: " + username);
+
+                var user = await service.GetUserByUsername(username);
+
+                if (user != null)
                 {
-                    user.Password = hashedPassword;
-                    await service.UpdateUser(user, user.UserID);
-                    token = GenerateToken(user);
+                    if ((String.IsNullOrEmpty(oldPassword) == false) && oldPassword.Equals(user.Password) && user.IsActive == true)
+                    {
+                        user.Password = hashedPassword;
+                        await service.UpdateUser(user, user.UserID);
+                        token = GenerateToken(user);
+                    }
+                    else if (String.IsNullOrEmpty(oldPassword) && hashedPassword.Equals(user.Password) && user.IsActive == true)
+                    {
+                        token = GenerateToken(user);
+                    }
                 }
-                else if (String.IsNullOrEmpty(oldPassword) && hashedPassword.Equals(user.Password) && user.IsActive == true)
-                {
-                    token = GenerateToken(user);
-                }
+            }
+            catch (Exception e)
+            {
+                _log.Error("GetToken error: ", e);
             }
 
             return token;
@@ -89,7 +99,7 @@ namespace AuthenticationLibrary.Implementation
             }
             catch (Exception e)
             {
-                Log.Info("GenerateToken error: " + e.Message);
+                _log.Error("GenerateToken error: ", e);
             }
 
             return tokenString;
@@ -97,30 +107,40 @@ namespace AuthenticationLibrary.Implementation
 
         public async Task<Teacher> ValidateTeacher(HttpRequest request)
         {
-            var handler = new JwtSecurityTokenHandler();
-            string content = String.Empty;
-            Token tokenObj = new Token();
-            var authorizationHeader = request.Headers["Authorization"].ToString();
-            string token = String.Empty;
             Teacher teacher = null;
 
-            if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
+            try
             {
-                token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
+                var handler = new JwtSecurityTokenHandler();
+                string content = String.Empty;
+                Token tokenObj = new Token();
+                var authorizationHeader = request.Headers["Authorization"].ToString();
+                string token = String.Empty;
 
-                handler = new JwtSecurityTokenHandler();
-                var tokenObject = handler.ReadJwtToken(token);
-
-                content = tokenObject.Payload.First().Value.ToString();
-
-                tokenObj = JsonConvert.DeserializeObject<Token>(content);
-
-                if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("teacher"))
+                if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
                 {
-                    var teachers = await service.GetTeachers();
+                    token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
 
-                    teacher = teachers.FirstOrDefault(t => t.UserID == tokenObj.UserID);
+                    handler = new JwtSecurityTokenHandler();
+                    var tokenObject = handler.ReadJwtToken(token);
+
+                    content = tokenObject.Payload.First().Value.ToString();
+
+                    tokenObj = JsonConvert.DeserializeObject<Token>(content);
+
+                    if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("teacher"))
+                    {
+                        var teachers = await service.GetTeachers();
+
+                        teacher = teachers.FirstOrDefault(t => t.UserID == tokenObj.UserID);
+                    }
                 }
+
+                _log.Info("Validate the teacher: " + teacher.FirstName + " " + teacher.LastName);
+            }
+            catch (Exception e)
+            {
+                _log.Error("ValidateTeacher error: ", e);
             }
 
             return teacher;
@@ -128,30 +148,40 @@ namespace AuthenticationLibrary.Implementation
 
         public async Task<Student> ValidateStudent(HttpRequest request)
         {
-            var handler = new JwtSecurityTokenHandler();
-            string content = String.Empty;
-            Token tokenObj = new Token();
-            var authorizationHeader = request.Headers["Authorization"].ToString();
-            string token = String.Empty;
             Student student = null;
 
-            if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
+            try
             {
-                token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
+                var handler = new JwtSecurityTokenHandler();
+                string content = String.Empty;
+                Token tokenObj = new Token();
+                var authorizationHeader = request.Headers["Authorization"].ToString();
+                string token = String.Empty;
 
-                handler = new JwtSecurityTokenHandler();
-                var tokenObject = handler.ReadJwtToken(token);
-
-                content = tokenObject.Payload.FirstOrDefault().Value.ToString();
-
-                tokenObj = JsonConvert.DeserializeObject<Token>(content);
-
-                if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("student"))
+                if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
                 {
-                    var students = await service.GetStudents();
+                    token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
 
-                    student = students.First(t => t.UserID == tokenObj.UserID);
+                    handler = new JwtSecurityTokenHandler();
+                    var tokenObject = handler.ReadJwtToken(token);
+
+                    content = tokenObject.Payload.FirstOrDefault().Value.ToString();
+
+                    tokenObj = JsonConvert.DeserializeObject<Token>(content);
+
+                    if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("student"))
+                    {
+                        var students = await service.GetStudents();
+
+                        student = students.First(t => t.UserID == tokenObj.UserID);
+                    }
                 }
+
+                _log.Info("Validate the student: " + student.FirstName + " " + student.LastName);
+            }
+            catch (Exception e)
+            {
+                _log.Error("ValidateStudent error: ", e);
             }
 
             return student;

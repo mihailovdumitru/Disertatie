@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Services;
@@ -11,6 +12,8 @@ namespace API.Controllers
     [Route("api/Students")]
     public class StudentsController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
         private readonly IUsersFacade usersFacade;
 
@@ -24,6 +27,8 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IEnumerable<Student>> Get()
         {
+            _log.Info("Get all the students.");
+
             return await service.GetStudents();
         }
 
@@ -31,6 +36,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<int> Post([FromBody]Student student)
         {
+            _log.Info("Insert a new student: " + student.FirstName + " " + student.LastName);
+
             return await usersFacade.AddStudentUser(student);
         }
 
@@ -38,6 +45,8 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<bool> Put(int id, [FromBody]Student student)
         {
+            _log.Info("Update the student: " + student.FirstName + " " + student.LastName);
+
             return await service.UpdateStudent(student, id);
         }
 
@@ -45,6 +54,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<bool> Delete(int id)
         {
+            _log.Info("Delete the student. StudentId: " + id);
+
             return await service.DeleteStudent(id);
         }
     }

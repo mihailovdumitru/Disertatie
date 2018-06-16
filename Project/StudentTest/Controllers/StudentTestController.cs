@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Model.StudentTest;
@@ -15,6 +16,8 @@ namespace StudentTest.Controllers
     [Route("api/[controller]/[action]")]
     public class StudentTest : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IAuthService authService;
         private readonly IService service;
 
@@ -33,6 +36,8 @@ namespace StudentTest.Controllers
 
             if (student != null)
             {
+                _log.Info("Get test for the student: " + student.FirstName + " " + student.LastName);
+
                 var testParams = await service.GetTestsParams();
                 var studentTestParams = testParams.FirstOrDefault(x => x.ClassID == student.ClassID &&
                                         (x.StartTest < currentTime && x.FinishTest > currentTime));
@@ -61,6 +66,8 @@ namespace StudentTest.Controllers
 
             if (student != null)
             {
+                _log.Info("Get test parameters for the student: " + student.FirstName + " " + student.LastName);
+
                 var testParams = await service.GetTestsParams();
                 var studentTestParams = testParams.FirstOrDefault(x => x.ClassID == student.ClassID &&
                                         (x.StartTest < currentTime && x.FinishTest > currentTime));
@@ -107,6 +114,8 @@ namespace StudentTest.Controllers
 
             if (student != null)
             {
+                _log.Info("Post test results for the student: " + student.FirstName + " " + student.LastName);
+
                 float numberOfPoints = 0;
                 var testParams = await service.GetTestsParams();
                 var studentTestParams = testParams.FirstOrDefault(x => x.TestID == testResults.TestID);
@@ -177,6 +186,8 @@ namespace StudentTest.Controllers
 
             if (student != null)
             {
+                _log.Info("Get test results for the student: " + student.FirstName + " " + student.LastName);
+
                 var testParams = await service.GetTestsParams();
                 var classTestParams = testParams.Where(x => x.ClassID == student.ClassID).OrderByDescending(t => t.FinishTest).First();
                 var testsResults = await service.GetTestsResults();
@@ -202,6 +213,8 @@ namespace StudentTest.Controllers
 
             if (student != null)
             {
+                _log.Info("Get full test for the student: " + student.FirstName + " " + student.LastName);
+
                 var testParams = await service.GetTestsParams();
                 var classTestParams = testParams.Where(x => x.ClassID == student.ClassID).OrderByDescending(t => t.FinishTest).First();
                 var test = await service.GetFullTestByID(classTestParams.TestID);
