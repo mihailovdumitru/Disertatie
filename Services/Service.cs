@@ -178,5 +178,10 @@ namespace Services
         {
             return await restHttpClient.Get<List<TestResults>>(studentTestUrl, RepositoriesEndpoint.GetTestResults);
         }
+
+        public async Task<bool> UpdateTest(Test test)
+        {
+            return await restHttpClient.Put<Test>(testApiUrl, string.Format(RepositoriesEndpoint.UpdateTest), test);
+        }
     }
 }

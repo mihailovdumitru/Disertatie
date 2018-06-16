@@ -55,3 +55,10 @@ services:
       context: .
       dockerfile: ../TeacherViewResults/Dockerfile
 
+
+  teachertests:
+    image: teachertests
+    build:
+      context: .
+      dockerfile: TeacherTests/Dockerfile
+

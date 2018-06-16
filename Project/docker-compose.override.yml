@@ -55,3 +55,10 @@ services:
     ports:
       - "80"
 
+
+  teachertests:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+

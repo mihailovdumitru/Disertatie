@@ -196,7 +196,7 @@ namespace StudentTest.Controllers
                 if (testsResults.Count != 0)
                 {
                     studentTestResults = testsResults.FirstOrDefault(x => x.StudentID == student.StudentID && x.TestID == classTestParams.TestID);
-                    if (studentTestResults == null)
+                    if(studentTestResults != null)
                         return Ok(studentTestResults);
                 }
 

@@ -30,5 +30,6 @@
         public static string GetTest = "StudentTest/GetTest/{0}";
         public static string AddTestResults = "StudentTest/TestResults";
         public static string GetTestResults = "StudentTest/TestResults";
+        public static string UpdateTest = "test";
     }
 }
