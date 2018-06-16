@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AuthenticationLibrary.Implementation;
+﻿using AuthenticationLibrary.Implementation;
 using AuthenticationLibrary.Interfaces;
 using AuthenticationLibrary.Mapper;
 using Microsoft.AspNetCore.Builder;
@@ -11,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Services;
 using Services.Facade.Implementation;
 using Services.Facade.Interfaces;

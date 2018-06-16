@@ -1,18 +1,16 @@
 ﻿using Model.Test;
 using Services.Infrastructure;
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Configuration;
 using Services.Endpoints;
 using Model.Repositories;
 using System.Collections.Generic;
-using Model.Dto;
 using Model.StudentTest;
 
 namespace Services
 {
-    public class Service: IService
+    public class Service : IService
     {
         private readonly IRestHttpClient restHttpClient;
         private readonly string testApiUrl;
@@ -40,7 +38,6 @@ namespace Services
         {
             return await restHttpClient.Post<Teacher, int>(apiUrl, $"{RepositoriesEndpoint.AddTeacher}", teacher);
         }
-
         public async Task<IEnumerable<Teacher>> GetTeachers()
         {
             return await restHttpClient.Get<IEnumerable<Teacher>>(apiUrl, $"{RepositoriesEndpoint.GetTeachers}");
@@ -148,7 +145,7 @@ namespace Services
 
         public async Task<bool> AddTestParams(TestParameters testParams)
         {
-            return await restHttpClient.Post<TestParameters,bool>(beginTestUrl, $"{RepositoriesEndpoint.AddTestParams}", testParams);
+            return await restHttpClient.Post<TestParameters, bool>(beginTestUrl, $"{RepositoriesEndpoint.AddTestParams}", testParams);
         }
 
         public async Task<List<TestParameters>> GetTestsParams()

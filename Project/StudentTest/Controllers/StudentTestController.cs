@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Model.StudentTest;
-using Model.Test;
 using Newtonsoft.Json;
 using Services;
 
@@ -36,12 +34,12 @@ namespace StudentTest.Controllers
             if (student != null)
             {
                 var testParams = await service.GetTestsParams();
-                var studentTestParams = testParams.FirstOrDefault(x => x.ClassID == student.ClassID && 
+                var studentTestParams = testParams.FirstOrDefault(x => x.ClassID == student.ClassID &&
                                         (x.StartTest < currentTime && x.FinishTest > currentTime));
 
                 if (studentTestParams != null)
                 {
-                     test = await service.GetTestByID(studentTestParams.TestID);
+                    test = await service.GetTestByID(studentTestParams.TestID);
                 }
 
                 if (test != null)
@@ -54,7 +52,6 @@ namespace StudentTest.Controllers
 
             return Unauthorized();
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetTestParams()
@@ -101,14 +98,12 @@ namespace StudentTest.Controllers
             return Unauthorized();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> PostTestsResults([FromBody]TestResults testResults)
         {
             var student = await authService.ValidateStudent(Request);
             testResults.TestResultDate = DateTime.Now;
             testResults.StudentID = student.StudentID;
-            
 
             if (student != null)
             {
@@ -123,8 +118,8 @@ namespace StudentTest.Controllers
                 int nrOfWrongAnswers = 0;
                 int nrOfUnfilledAnswers = 0;
                 ResultWithStats response = null;
-
                 var testTotalNumberOfPoints = test.Questions.Sum(x => x.Question.Points);
+
                 foreach (var elem in testResultsList)
                 {
                     var question = test.Questions.FirstOrDefault(x => x.Question.QuestionID == elem.QuestionID);
@@ -145,14 +140,14 @@ namespace StudentTest.Controllers
                         numberOfPoints -= question.Question.Points * penalty / 100;
                         nrOfWrongAnswers++;
                     }
-                    else if(elem.Answers.Count == 0)
+                    else if (elem.Answers.Count == 0)
                     {
                         nrOfUnfilledAnswers++;
                     }
                 }
 
                 testResults.Points = numberOfPoints;
-                testResults.Mark = Convert.ToSingle(Math.Round((numberOfPoints / testTotalNumberOfPoints) * 10,2));
+                testResults.Mark = Convert.ToSingle(Math.Round((numberOfPoints / testTotalNumberOfPoints) * 10, 2));
 
                 testResults.NrOfCorrectAnswers = nrOfCorrectAnswers;
                 testResults.NrOfWrongAnswers = nrOfWrongAnswers;
@@ -170,12 +165,10 @@ namespace StudentTest.Controllers
                 bool result = await service.AddTestResults(testResults);
 
                 return Ok(response);
-
             }
 
             return Unauthorized();
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetTestsResults()
@@ -186,11 +179,9 @@ namespace StudentTest.Controllers
             {
                 var testParams = await service.GetTestsParams();
                 var classTestParams = testParams.Where(x => x.ClassID == student.ClassID).OrderByDescending(t => t.FinishTest).First();
-
                 var testsResults = await service.GetTestsResults();
-
-
                 TestResults studentTestResults = null;
+
                 if (testsResults.Count != 0)
                 {
                     studentTestResults = testsResults.FirstOrDefault(x => x.StudentID == student.StudentID && x.TestID == classTestParams.TestID);
@@ -204,7 +195,6 @@ namespace StudentTest.Controllers
             return Unauthorized();
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetFullTest()
         {
@@ -216,7 +206,6 @@ namespace StudentTest.Controllers
                 var classTestParams = testParams.Where(x => x.ClassID == student.ClassID).OrderByDescending(t => t.FinishTest).First();
                 var test = await service.GetFullTestByID(classTestParams.TestID);
 
-
                 if (test != null)
                 {
                     return Ok(test);
@@ -226,27 +215,6 @@ namespace StudentTest.Controllers
             }
 
             return Unauthorized();
-        }
-
-
-
-
-        // POST: api/StudentTest
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-        
-        // PUT: api/StudentTest/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

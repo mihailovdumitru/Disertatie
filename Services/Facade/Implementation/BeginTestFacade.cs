@@ -7,14 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Facade.Implementation
 {
-    public class BeginTestFacade:IBeginTestFacade
+    public class BeginTestFacade : IBeginTestFacade
     {
         private readonly IService service;
         private readonly IFileGenerator fileGenerator;
@@ -49,9 +48,9 @@ namespace Services.Facade.Implementation
             List<StudentDataForFile> studentsCredentialsForFile = new List<StudentDataForFile>();
             List<User> hashedList = null;
 
-            if(classStudents != null)
+            if (classStudents != null)
             {
-                foreach(var student in classStudents)
+                foreach (var student in classStudents)
                 {
                     user = new User
                     {
@@ -82,7 +81,7 @@ namespace Services.Facade.Implementation
             hashedList = new List<User>(users);
             GenerateHashForPasswords(hashedList);
 
-            foreach(var userWithHashedPwd in hashedList)
+            foreach (var userWithHashedPwd in hashedList)
             {
                 await service.UpdateUser(userWithHashedPwd, userWithHashedPwd.UserID);
             }
@@ -90,13 +89,11 @@ namespace Services.Facade.Implementation
             return fileContent;
         }
 
-
-
         public List<User> GeneratePasswordsForUsersList(List<User> users)
         {
-            if(users != null)
+            if (users != null)
             {
-                for(int i = 0; i < users.Count; i++)
+                for (int i = 0; i < users.Count; i++)
                 {
                     users[i].Password = RandomString(passwordSize);
                 }
@@ -107,7 +104,7 @@ namespace Services.Facade.Implementation
 
         public List<User> GenerateHashForPasswords(List<User> users)
         {
-            byte[] passwordByteArray = null;          
+            byte[] passwordByteArray = null;
             byte[] hashedPasswordByteArray = null;
 
             if (users != null)
@@ -117,46 +114,11 @@ namespace Services.Facade.Implementation
                     passwordByteArray = Encoding.ASCII.GetBytes(users[i].Password);
                     hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
                     users[i].Password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty).ToLower();
-
                 }
             }
 
             return users;
         }
-
-        /*public async Task<bool> PutHashCodesForStudents(List<Student> students)
-        {
-            bool result = false;
-
-            foreach (var student in students)
-            {
-                student.Password = RandomString(passwordSize);
-                result = await service.UpdateStudent(student,student.StudentID);
-            }
-
-            return result;
-        }
-
-        public string GetHashCodePassword(string password)
-        {
-            byte[] passwordByteArray = Encoding.ASCII.GetBytes(password);
-            var hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-            var password = Encoding.Default.GetString(hashedPasswordByteArray);
-
-            User studentUser = new User
-            {
-                Username = student.Email,
-                Role = StudentRole,
-                Password = password,
-                IsActive = true
-            };
-
-            student.UserID = await serviceRepo.AddUser(studentUser);
-
-            return await serviceRepo.AddStudent(student);
-        }*/
-
-
 
         private string RandomString(int length)
         {
@@ -164,7 +126,5 @@ namespace Services.Facade.Implementation
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-
-
     }
 }
