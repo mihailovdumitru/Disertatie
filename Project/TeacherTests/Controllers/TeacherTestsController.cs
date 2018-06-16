@@ -23,8 +23,6 @@ namespace TeacherTests.Controllers
             this.service = service;
         }
 
-
-
         [HttpGet]
         [Route("testID/{testID}")]
         public async Task<IActionResult> GetFullTestByID(int testID)
@@ -46,12 +44,6 @@ namespace TeacherTests.Controllers
             return Unauthorized();
         }
         
-        // POST: api/TeacherTests
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-        
         [HttpPut]
         public async Task<IActionResult> UpdateTest([FromBody]Test test)
         {
@@ -65,13 +57,6 @@ namespace TeacherTests.Controllers
             }
 
             return Unauthorized();
-
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
