@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using AuthenticationLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Model.Test;
 using Services;
@@ -10,29 +11,27 @@ namespace CreateTest.Controllers
     [Route("api/CreateTest")]
     public class CreateTestController : Controller
     {
-        public readonly IService service;
+        private readonly IService service;
+        private readonly IAuthService auth;
 
-        public CreateTestController(IService service)
+        public CreateTestController(IService service,IAuthService auth)
         {
             this.service = service;
+            this.auth = auth;
         }
 
-        // GET: api/CreateTest/5
-        [HttpGet("{id}", Name = "Get")]
-        public void Get(HttpRequestMessage request, int id)
-        {
-            //Testare test = new Testare();
-            //test.Nume = "Ana";
-            //return test;
-        }
-
-        // POST: api/CreateTest
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Test test)
+        public async Task<IActionResult> Post([FromBody] Test test)
         {
-            test.TeacherID = 1;
+            var teacher = await auth.ValidateTeacher(Request);
+            if (teacher != null)
+            {    
+                test.TeacherID = teacher.TeacherID;
+                ActionResult result = await service.AddTest(test);
+                return Ok(true);
+            }
 
-            return await service.AddTest(test);
+            return Unauthorized();
         }
     }
 }

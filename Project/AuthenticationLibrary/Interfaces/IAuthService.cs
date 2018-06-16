@@ -9,5 +9,6 @@ namespace AuthenticationLibrary.Interfaces
         Task<string> GetToken(HttpRequest request);
         Task<Teacher> ValidateTeacher(HttpRequest request);
         Task<Student> ValidateStudent(HttpRequest request);
+        Task<User> ValidateAdmin(HttpRequest request);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AuthenticationLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Services;
@@ -13,39 +14,77 @@ namespace API.Controllers
     {
         private readonly IService service;
         private readonly IUsersFacade usersFacade;
+        private readonly IAuthService authService;
 
-        public TeachersController(IService service, IUsersFacade usersFacade)
+        public TeachersController(IService service, IUsersFacade usersFacade, IAuthService authService)
         {
             this.service = service;
             this.usersFacade = usersFacade;
+            this.authService = authService;
         }
 
         // GET: api/Teachers
         [HttpGet]
-        public async Task<IEnumerable<Teacher>> Get()
+        public async Task<IActionResult> Get()
         {
-            return await service.GetTeachers();
+            var admin = await authService.ValidateAdmin(Request);
+            var teacher = await authService.ValidateTeacher(Request);
+
+            if (admin != null || teacher != null)
+            {
+                var teachers = await service.GetTeachers();
+                return Ok(teachers);
+            }
+
+            return Unauthorized();
         }
 
         // POST: api/Teachers
         [HttpPost]
-        public async Task<int> Post([FromBody]Teacher teacher)
+        public async Task<IActionResult> Post([FromBody]Teacher teacher)
         {
-            return await usersFacade.AddTeacherUser(teacher);
+            var admin = await authService.ValidateAdmin(Request);
+            var teacherUser = await authService.ValidateTeacher(Request);
+
+            if (admin != null || teacherUser != null)
+            {
+                var teacherID = await usersFacade.AddTeacherUser(teacher);
+                return Ok(teacherID);
+            }
+
+            return Unauthorized();
         }
 
         // PUT: api/Teachers/5
         [HttpPut("{id}")]
-        public async Task<bool> Put(int id, [FromBody]Teacher teacher)
+        public async Task<IActionResult> Put(int id, [FromBody]Teacher teacher)
         {
-            return await service.UpdateTeacher(teacher, id);
+            var admin = await authService.ValidateAdmin(Request);
+            var teacherUser = await authService.ValidateTeacher(Request);
+
+            if (admin != null || teacherUser != null)
+            {
+                var success = await service.UpdateTeacher(teacher, id);
+                return Ok(success);
+            }
+
+            return Unauthorized();
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public async Task<bool> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return await service.DeleteTeacher(id);
+            var admin = await authService.ValidateAdmin(Request);
+            var teacherUser = await authService.ValidateTeacher(Request);
+
+            if (admin != null || teacherUser != null)
+            {
+                var success = await service.DeleteTeacher(id);
+                return Ok(success);
+            }
+
+            return Unauthorized();
         }
     }
 }

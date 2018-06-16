@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AuthenticationLibrary.Implementation;
+using AuthenticationLibrary.Interfaces;
+using AuthenticationLibrary.Mapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
@@ -37,9 +40,14 @@ namespace API
                 options.Filters.Add(new CorsAuthorizationFilterFactory("UrlPolicy"));
             });
 
+            var config = new AutoMapper.MapperConfiguration(mapperConfig => mapperConfig.AddProfile(new MappingProfile()));
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddScoped<IService, Service>();
             services.AddScoped<IRestHttpClient, RestHttpClient>();
             services.AddScoped<IUsersFacade, UsersFacade>();
+            services.AddScoped<IAuthService, AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

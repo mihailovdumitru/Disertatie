@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AuthenticationLibrary.Implementation;
+using AuthenticationLibrary.Interfaces;
+using AuthenticationLibrary.Mapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Services;
@@ -20,6 +25,7 @@ namespace CreateTest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
             services.AddCors(o => o.AddPolicy("UrlPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
@@ -27,21 +33,30 @@ namespace CreateTest
                        .AllowAnyHeader();
             }));
 
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("UrlPolicy"));
+            });
+
+            var config = new AutoMapper.MapperConfiguration(mapperConfig => mapperConfig.AddProfile(new MappingProfile()));
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddScoped<IService, Service>();
             services.AddScoped<IRestHttpClient, RestHttpClient>();
+            services.AddScoped<IAuthService, AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors("UrlPolicy");
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseMvc();
+            app.UseCors("UrlPolicy");
         }
     }
 }

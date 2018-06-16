@@ -156,5 +156,34 @@ namespace AuthenticationLibrary.Implementation
 
             return student;
         }
+
+        public async Task<User> ValidateAdmin(HttpRequest request)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            string content = String.Empty;
+            Token tokenObj = new Token();
+            var authorizationHeader = request.Headers["Authorization"].ToString();
+            string token = String.Empty;
+            User admin = null;
+
+            if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
+            {
+                token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
+
+                handler = new JwtSecurityTokenHandler();
+                var tokenObject = handler.ReadJwtToken(token);
+
+                content = tokenObject.Payload.FirstOrDefault().Value.ToString();
+
+                tokenObj = JsonConvert.DeserializeObject<Token>(content);
+
+                if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("admin"))
+                {
+                    admin = await service.GetUserByUsername(tokenObj.Username);
+                }
+            }
+
+            return admin;
+        }
     }
 }

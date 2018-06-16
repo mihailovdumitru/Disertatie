@@ -18,7 +18,6 @@ namespace BeginTest.Controllers
         private readonly IService service;
         private readonly IBeginTestFacade facade;
         private readonly IAuthService auth;
-        int teacherID = 21;
 
         public BeginTestController(IService service, IBeginTestFacade facade, IAuthService auth)
         {
@@ -50,7 +49,7 @@ namespace BeginTest.Controllers
             var teacher = await auth.ValidateTeacher(Request);
             if (teacher != null)
             {
-                var teacherLectures = await facade.GetTeachersLectures(teacherID);
+                var teacherLectures = await facade.GetTeachersLectures(teacher.TeacherID);
 
                 return Ok(teacherLectures);
             }
@@ -78,7 +77,7 @@ namespace BeginTest.Controllers
             var teacher = await auth.ValidateTeacher(Request);
             if (teacher != null)
             {
-                testParams.TeacherID = teacherID;
+                testParams.TeacherID = teacher.TeacherID;
                 testParams.StartTest = DateTime.Now;
                 testParams.FinishTest = DateTime.Now.AddMinutes(testParams.Duration);
                 result = await service.AddTestParams(testParams);
