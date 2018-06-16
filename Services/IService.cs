@@ -41,5 +41,6 @@ namespace Services
         Task<Test> GetFullTestByID(int testID);
         Task<bool> AddTestResults(TestResults testResults);
         Task<List<TestResults>> GetTestsResults();
+        Task<bool> UpdateTest(Test test);
     }
 }
