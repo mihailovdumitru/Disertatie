@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Model.Test;
 using Services;
 using Services.Facade.Interfaces;
-using Services.Infrastructure;
 
 namespace BeginTest.Controllers
 {
@@ -90,33 +86,6 @@ namespace BeginTest.Controllers
             }
 
             return Unauthorized();
-        }
-
-
-
-        /*[HttpPut]
-        public async Task<ContentResult> HashCodesForStudents([FromBody] int classID)
-        {
-
-            return await facade.PutHashCodesForStudents(classStudents);
-        }*/
-
-        // POST: api/Lectures
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-        
-        // PUT: api/Lectures/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

@@ -7,17 +7,19 @@ using Model.Repositories;
 using Newtonsoft.Json;
 using Services;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace AuthenticationLibrary.Implementation
 {
-    public class AuthService:IAuthService
+    public class AuthService : IAuthService
     {
+        private static ILog Log;
+
         private readonly IMapper mapper;
         private readonly IService service;
         private readonly string key;
@@ -43,13 +45,13 @@ namespace AuthenticationLibrary.Implementation
 
             if (user != null)
             {
-                if((String.IsNullOrEmpty(oldPassword) == false) && oldPassword.Equals(user.Password) && user.IsActive == true)
+                if ((String.IsNullOrEmpty(oldPassword) == false) && oldPassword.Equals(user.Password) && user.IsActive == true)
                 {
                     user.Password = hashedPassword;
                     await service.UpdateUser(user, user.UserID);
                     token = GenerateToken(user);
                 }
-                else if(String.IsNullOrEmpty(oldPassword) && hashedPassword.Equals(user.Password) && user.IsActive == true)
+                else if (String.IsNullOrEmpty(oldPassword) && hashedPassword.Equals(user.Password) && user.IsActive == true)
                 {
                     token = GenerateToken(user);
                 }
@@ -58,31 +60,37 @@ namespace AuthenticationLibrary.Implementation
             return token;
         }
 
-
         private string GenerateToken(User user)
         {
+            var tokenString = string.Empty;
 
-            Token token = mapper.Map<User, Token>(user);
-            token.ExpiresAt = DateTime.Now.AddMinutes(tokenValabilityMins);
-            string jsonToken = JsonConvert.SerializeObject(token);
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
-
-            var header = new JwtHeader(credentials);
-
-            var payload = new JwtPayload
+            try
             {
-                {"content", token }
-            };
+                Token token = mapper.Map<User, Token>(user);
+                token.ExpiresAt = DateTime.Now.AddMinutes(tokenValabilityMins);
+                string jsonToken = JsonConvert.SerializeObject(token);
 
-            var secToken = new JwtSecurityToken(header, payload);
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
 
-            var handler = new JwtSecurityTokenHandler();
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-            var tokenString = handler.WriteToken(secToken);
+                var header = new JwtHeader(credentials);
 
+                var payload = new JwtPayload
+                {
+                    {"content", token }
+                };
+
+                var secToken = new JwtSecurityToken(header, payload);
+
+                var handler = new JwtSecurityTokenHandler();
+
+                tokenString = handler.WriteToken(secToken);
+            }
+            catch (Exception e)
+            {
+                Log.Info("GenerateToken error: " + e.Message);
+            }
 
             return tokenString;
         }
@@ -96,7 +104,7 @@ namespace AuthenticationLibrary.Implementation
             string token = String.Empty;
             Teacher teacher = null;
 
-            if(!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
+            if (!String.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith(tokenStartsWith))
             {
                 token = authorizationHeader.Replace(tokenStartsWith, String.Empty);
 
@@ -107,11 +115,11 @@ namespace AuthenticationLibrary.Implementation
 
                 tokenObj = JsonConvert.DeserializeObject<Token>(content);
 
-                if(tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("teacher"))
+                if (tokenObj.ExpiresAt > DateTime.Now && tokenObj.Role.Equals("teacher"))
                 {
                     var teachers = await service.GetTeachers();
 
-                     teacher = teachers.FirstOrDefault(t => t.UserID == tokenObj.UserID);
+                    teacher = teachers.FirstOrDefault(t => t.UserID == tokenObj.UserID);
                 }
             }
 
@@ -148,6 +156,5 @@ namespace AuthenticationLibrary.Implementation
 
             return student;
         }
-
     }
 }
