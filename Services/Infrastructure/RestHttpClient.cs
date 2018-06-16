@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +10,8 @@ namespace Services.Infrastructure
 {
     public class RestHttpClient : IRestHttpClient
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private string mediaTypeRequestHeader;
 
         public async Task<T> Get<T>(string baseUrl, string url, string accessToken = null)
@@ -34,6 +37,8 @@ namespace Services.Infrastructure
             }
             catch (Exception ex)
             {
+                _log.Error("Rest Get error: ", ex);
+
                 return default(T);
             }
         }
@@ -60,7 +65,7 @@ namespace Services.Infrastructure
             }
             catch (Exception ex)
             {
-
+                _log.Error("Rest Post error: ", ex);
             }
 
             return default(TOut);
@@ -87,7 +92,7 @@ namespace Services.Infrastructure
             }
             catch (Exception ex)
             {
-
+                _log.Error("Rest Put error: ", ex);
             }
 
             return false;
@@ -113,7 +118,7 @@ namespace Services.Infrastructure
             }
             catch (Exception ex)
             {
-
+                _log.Error("Rest Delete error: ", ex);
             }
 
             return false;

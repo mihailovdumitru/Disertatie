@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Services;
@@ -11,6 +12,8 @@ namespace API.Controllers
     [Route("api/Classes")]
     public class ClassesController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
         private readonly IAuthService authService;
 
@@ -24,6 +27,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            _log.Info("Get all the classes.");
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -40,6 +44,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]StudyClass studyClass)
         {
+
+            _log.Info("Insert a new class: " + studyClass.Name);
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -57,6 +63,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody]StudyClass studyClass)
         {
+            _log.Info("Update the class: " + studyClass.Name);
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -74,6 +81,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            _log.Info("Delete the class. ClassId: " + id);
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 

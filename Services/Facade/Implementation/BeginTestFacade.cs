@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using log4net;
+using Microsoft.AspNetCore.Mvc;
 using Model.Dto;
 using Model.Repositories;
 using Services.Facade.Interfaces;
@@ -15,6 +16,8 @@ namespace Services.Facade.Implementation
 {
     public class BeginTestFacade : IBeginTestFacade
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
         private readonly IFileGenerator fileGenerator;
         private Random random = new Random();
@@ -91,12 +94,19 @@ namespace Services.Facade.Implementation
 
         public List<User> GeneratePasswordsForUsersList(List<User> users)
         {
-            if (users != null)
+            try
             {
-                for (int i = 0; i < users.Count; i++)
+                if (users != null)
                 {
-                    users[i].Password = RandomString(passwordSize);
+                    for (int i = 0; i < users.Count; i++)
+                    {
+                        users[i].Password = RandomString(passwordSize);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                _log.Error("GeneratePasswordsForUsersList error: ", e);
             }
 
             return users;
@@ -104,17 +114,24 @@ namespace Services.Facade.Implementation
 
         public List<User> GenerateHashForPasswords(List<User> users)
         {
-            byte[] passwordByteArray = null;
-            byte[] hashedPasswordByteArray = null;
-
-            if (users != null)
+            try
             {
-                for (int i = 0; i < users.Count; i++)
+                byte[] passwordByteArray = null;
+                byte[] hashedPasswordByteArray = null;
+
+                if (users != null)
                 {
-                    passwordByteArray = Encoding.ASCII.GetBytes(users[i].Password);
-                    hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
-                    users[i].Password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty).ToLower();
+                    for (int i = 0; i < users.Count; i++)
+                    {
+                        passwordByteArray = Encoding.ASCII.GetBytes(users[i].Password);
+                        hashedPasswordByteArray = sha.ComputeHash(passwordByteArray);
+                        users[i].Password = BitConverter.ToString(hashedPasswordByteArray).Replace("-", string.Empty).ToLower();
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                _log.Error("GenerateHashForPasswords error: ", e);
             }
 
             return users;

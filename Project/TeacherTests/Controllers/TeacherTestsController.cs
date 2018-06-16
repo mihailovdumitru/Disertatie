@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
-using Microsoft.AspNetCore.Http;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Test;
 using Services;
@@ -14,6 +11,8 @@ namespace TeacherTests.Controllers
     [Route("api/[controller]/[action]")]
     public class TeacherTestsController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IAuthService authService;
         private readonly IService service;
 
@@ -31,6 +30,8 @@ namespace TeacherTests.Controllers
 
             if (teacher != null)
             {
+                _log.Info("Get full test by Id for the teacher: " + teacher.FirstName + " " + teacher.LastName);
+
                 var test = await service.GetFullTestByID(testID);
 
                 if (test != null)
@@ -43,7 +44,7 @@ namespace TeacherTests.Controllers
 
             return Unauthorized();
         }
-        
+
         [HttpPut]
         public async Task<IActionResult> UpdateTest([FromBody]Test test)
         {
@@ -51,6 +52,8 @@ namespace TeacherTests.Controllers
 
             if (teacher != null)
             {
+                _log.Info("Update test for the teacher: " + teacher.FirstName + " " + teacher.LastName);
+
                 await service.UpdateTest(test);
 
                 return Ok(test);

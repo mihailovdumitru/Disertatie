@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -12,6 +13,8 @@ namespace TeacherViewResults.Controllers
     [Route("api/[controller]/[action]")]
     public class TeacherViewResultsController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
         private readonly IAuthService authService;
 
@@ -29,6 +32,8 @@ namespace TeacherViewResults.Controllers
 
             if (teacher != null)
             {
+                _log.Info("Get tests results for the teacher: " + teacher.FirstName + " " + teacher.LastName);
+
                 var tests = await service.GetTests();
                 var test = tests.Where(x => x.TestID == testID);
 

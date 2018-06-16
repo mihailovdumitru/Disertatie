@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using log4net;
 using AuthenticationLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
@@ -13,6 +14,8 @@ namespace API.Controllers
     {
         private readonly IService service;
         private readonly IAuthService authService;
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public LecturesController(IService service, IAuthService authService)
         {
@@ -24,6 +27,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            _log.Info("Get all the lectures.");
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -40,7 +44,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Lecture lecture)
         {
-
+            _log.Info("Insert a new lecture: " + lecture.Name);
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -57,6 +61,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody]Lecture lecture)
         {
+            _log.Info("Update the lecture: " + lecture.Name);
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -73,6 +78,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            _log.Info("Delete the lecture. LectureId: " + id);
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 

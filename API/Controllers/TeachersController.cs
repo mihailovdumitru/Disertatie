@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AuthenticationLibrary.Interfaces;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Model.Repositories;
 using Services;
@@ -12,6 +13,8 @@ namespace API.Controllers
     [Route("api/Teachers")]
     public class TeachersController : Controller
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IService service;
         private readonly IUsersFacade usersFacade;
         private readonly IAuthService authService;
@@ -27,6 +30,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            _log.Info("Get all the teachers.");
             var admin = await authService.ValidateAdmin(Request);
             var teacher = await authService.ValidateTeacher(Request);
 
@@ -43,6 +47,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Teacher teacher)
         {
+            _log.Info("Insert a new teacher: " + teacher.FirstName + " " + teacher.LastName);
             var admin = await authService.ValidateAdmin(Request);
             var teacherUser = await authService.ValidateTeacher(Request);
 
@@ -59,6 +64,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody]Teacher teacher)
         {
+            _log.Info("Update the teacher: " + teacher.FirstName + " " + teacher.LastName);
             var admin = await authService.ValidateAdmin(Request);
             var teacherUser = await authService.ValidateTeacher(Request);
 
@@ -75,6 +81,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            _log.Info("Delete the teacher. TeacherId: " + id);
             var admin = await authService.ValidateAdmin(Request);
             var teacherUser = await authService.ValidateTeacher(Request);
 
