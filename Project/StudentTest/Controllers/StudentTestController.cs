@@ -171,9 +171,18 @@ namespace StudentTest.Controllers
                     Points = numberOfPoints
                 };
 
-                bool result = await service.AddTestResults(testResults);
+                bool result = false;
 
-                return Ok(response);
+                if (testResults.TestResultDate <= studentTestParams.FinishTest)
+                {
+                    result = await service.AddTestResults(testResults);
+                }
+
+                if (result == true)
+                {
+                    return Ok(response);
+                }
+                return Unauthorized();
             }
 
             return Unauthorized();
